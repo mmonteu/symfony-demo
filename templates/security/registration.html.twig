@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SecurityController!{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+        <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <h1 class="mt-4 mb-3">Inscription</h1>
+
+
+        {{ form_start(form) }}
+
+		{{ form_widget(form) }}
+
+		<button type="submit" class="btn btn-success">Inscription !</button>
+		
+		{{ form_end(form) }}
+
+
+        </div>
+        </div>
+</div>
+
+
+{% endblock %}
