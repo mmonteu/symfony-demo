@@ -2,10 +2,12 @@
 
 Ceci est un projet demo.
 
-Some basic Git commands are:
+Git commandes :
 ```
 git status
 git add .
-git commit -m 'comment name'
+git commit -m 'commentaires'
 git push
+
+git pull https://github.com/mmonteu/symfony-demo.git
 ```
