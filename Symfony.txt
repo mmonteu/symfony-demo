@@ -1,0 +1,317 @@
+Prérequis :
+	- Doc Symfony : https://symfony.com/doc/current/index.html
+	- Wamp/Mamp à jour
+	- Php à jour (Variable d'environnement => Variables système => PATH => C:\wamp\bin\php\phpx.x.xx)
+	- PhpStorm/SublimeText/Visual Studio Code à jour
+		- Installer PackageControl pour SublimeText
+		- Se rendre sur https://packagecontrol.io/installation
+		- Ouvrir la commande : Ctrl + Shift + P, écrire Package Control: Install Package
+		- Différent Packages : (Emmet, Future Funk, SideBarEnhancements, SublimeLinter, SublimeLinter-php, SublimeCodeIntel, Twig)
+		- Dracula Theme : https://draculatheme.com/
+	- Composer à jour (cmd => cd C:\WampServer\wamp64\www\xxx =>  $ composer update)
+	- Vider le cache (cmd => cd C:\WampServer\wamp64\www\xxx => $ php bin/console cache:clear)
+	- Mettre à jour la BDD (cmd => cd C:\WampServer\wamp64\www\xxx => $ php bin/console doctrine:schema:update --force)
+
+
+Création projet :
+	- Créer le projet grâce à composer (cmd => cd C:\WampServer\wamp64\www => $ composer create-project symfony/website-skeleton xxx)
+	- Librairie et installation du server (cmd => cd C:\WampServer\wamp64\www\xxx => $ composer require server --dev)
+	- Installation de ORM (cmd => cd C:\WampServer\wamp64\www\xxx => $ composer require symfony/orm-pack)
+	- Installation des assets (cmd => cd C:\WampServer\wamp64\www\xxx => $ composer require symfony/asset)
+	- Lancer le server (cmd => cd C:\WampServer\wamp64\www\xxx => $ php bin/console server:run)
+	- http://127.0.0.1:8000
+
+
+Récupérer un projet :
+	Etape 1, la bdd :
+		- Dans le fichier .env, modifier la ligne 27 
+			- Windows : (DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name)
+			- Mac : (DATABASE_URL=mysql://db_user:db_password@127.0.0.1:8889/db_name))
+		- Faire un ($ composer update)
+		- Créer la BDD ($ php bin/console doctrine:database:create)
+		- Mettre à jour les tables ($ php bin/console doctrine:schema:update --force)
+		- Récupérer les données des tables ($ php bin/console doctrine:fixtures:load --append)
+
+	Etape 2, yarn :
+		- Update yarn ($ yarn)
+		- MAJ ($ yarn encore dev)
+
+
+Créer un controller :
+	- (cmd => cd C:\WampServer\wamp64\www\xxx => $ php bin/console make:controller)
+	- Donner un nom au controller du type : xxxController
+	- Cela va créer xxxController.php dans src/Controller et un index.html.twig dans templates/xxx
+
+
+Créer une page :
+	- Utiliser les annotations : /**
+     				     * @Route("/xxx", name="xxx")
+     				     */
+    				
+				     public function xxx()
+    				     {
+        			     	return $this->render('blog/xxx.html.twig');
+    				     }
+
+	- Créer un fichier du type xxx.html.twig dans templates/xxx
+
+	- Afficher les liens :
+		- En claire index.html.twig
+		- Avec path : {{ path('name_route') }}
+
+
+Ajouter du CSS :
+	- Installer Node.js (https://nodejs.org/en/download/)
+	- Installer encore ($ composer require symfony/webpack-encore-bundle)
+	- Installer YarnPackageManager (https://yarnpkg.com/fr/docs/install)
+	- Installer yarn ($ yarn) & ($ yarn install)
+	- Création du css par yarn dans xxx/assets/css, nom du fichier (app.css)
+	- Ajouter ces 2 lignes dans le base.html.twig :
+		- Dans le block stylesheets : {{ encore_entry_link_tags('app') }}
+		- Dans le block javascripts : {{ encore_entry_script_tags('app') }}
+	- Appliquer les changements ($ yarn encore dev) ou en direct ($ yarn encore dev --watch)
+
+	- Installer Bootstrap ($ yarn add bootstrap --dev)
+	- Ajouter dans le app.css : @import "~bootstrap/scss/bootstrap";
+	- Renommer assets/app.css en app.scss, puis modifier également dans le dossier app.js require('../css/app.css'); en require('../css/app.scss');
+	- Enlever les commentaires dans webpack.config.js : ligne 57 => .enableSassLoader
+	- Mettre en place les modifications ($ yarn encore dev), puis en fonction des versions ($ yarn add sass-loader@^7.0.1 node-sass --dev)
+	- Mettre à jour l'ensembles des modifications ($ yarn encore dev)
+
+	- Installer FontAwesome ($ yarn add --dev @fortawesome/fontawesome-free)
+	- Ajouter ces deux lignes dans le asset/js.app :
+		- require('@fortawesome/fontawesome-free/css/all.min.css');
+		- require('@fortawesome/fontawesome-free/js/all.js');
+	- Mettre à jour les fichiers ($ yarn encore dev)
+
+
+Afficher les images :
+	- Installer copy-webpack ( $ npm install copy-webpack-plugin --save-dev)
+	- Ajouter dans le webpack.config.js : 
+		- var CopyWebpackPlugin = require('copy-webpack-plugin');
+		- .addPlugin(new CopyWebpackPlugin([
+        	  	{ from: './assets/images', to: 'images' }
+    		  ]))
+
+	- MAJ ($ yarn encore dev)
+	- Intégrer dans le xxx.html.twig : <img src="{{asset('build/images/my-image.png')}}" title="my image" alt="My image">
+
+
+Mettre en place une BDD : 
+	- Dans le fichier .env, modifier la ligne 27 
+		- Windows : (DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name)
+		- Mac : (DATABASE_URL=mysql://db_user:db_password@127.0.0.1:8889/db_name))
+	- Créer la BDD ($ php bin/console doctrine:database:create)
+
+	- Créer une entité ($ php bin/console make:entity), donner un nom, donner des propriétés, donner un type (string, text, datetime...), nullable ou pas
+	- Appliquer les entités dans la BDD ($ php bin/console make:migration) & ($ php bin/console doctrine:migration:migrate)
+
+	- Ajouter les fixtures ($ composer require orm-fixtures --dev) & ($ php bin/console make:fixtures) & ($ php bin/console doctrine:fixtures:load --append)
+
+
+Créer un formulaire :
+	- Dans xxxController.php, ajouter les requests dans : public function contact(Request $request, ObjectManager $manager)
+	- Ajouter les use :
+		- use Symfony\Component\HttpFoundation\Request;
+		- use Doctrine\Common\Persistence\ObjectManager;
+		- use App\Entity\xxx;
+		- use Symfony\Component\Form\Extension\Core\Type\(Text/Textarea/Email...)Type;
+
+	- Dans le xxxController.php :
+		- $contact = new Contact;
+
+        	$form = $this->createFormBuilder($contact)
+                     	->add('name', TextType::class, [ 'attr' => [ 'placeholder' => "Votre nom", 'class' => 'form-control' ]])
+                     	->add('mail', EmailType::class, [ 'attr' => [ 'placeholder' => "mail@gmail.com", 'class' => 'form-control' ]])
+                     	->add('object', TextType::class, [ 'attr' => [ 'placeholder' => "Objet du message", 'class' => 'form-control' ]])
+                     	->add('content', TextareaType::class, [ 'attr' => [ 'placeholder' => "Votre message ici", 'class' => 'form-control' ]])
+                     	->getForm();
+
+		$form->handleRequest($request);
+
+		if($form->isSubmitted() && $form->isValid()) {
+            		$manager->persist($contact);
+            		$manager->flush();
+        	}
+
+        	return $this->render('blog/contact.html.twig', ['formContact' => $form->createView()]);
+
+	- Ajouter dans la vue xxx.html.twig :
+		-{{ form_start(formContact) }}
+
+            		<div class="form-group">
+                		<label for="">Nom</label>
+                		{{ form_widget(formContact.name) }}
+            		</div>
+
+		<button type="submit" class="btn btn-success">Envoyer</button>
+
+		{{ form_end(formContact) }}
+	- Tester le formulaire avec PhpMyAdmin
+
+
+Validation :
+	- Ajouter use dans Entity/Contact.php : use Symfony\Component\Validator\Constraints as Assert;
+	- Ajouter des annotations de validation tel que : * @Assert\Length(min="8", minMessage="Votre mdp doit faire 8 caractères")
+
+
+Authentification :
+	- Créer une entité User/Admin... ($ php bin/console make:entity User)
+	- Mettre à jour les entités ($ php bin/console make:migration) & ($ php bin/console doctrine:migrations:migrate) ou ($ php bin/console doctrine:schema:update --force)
+	- Créer un formulaire d'inscriptions ($ php bin/console make:form RegistrationType) lié ce form à l'entité en question ici User
+		- Modifier le formulaire :
+			->add('email', EmailType::class, [ 'attr' => ['class' => 'form-control' ]])
+            		->add('username', TextType::class, [ 'attr' => ['class' => 'form-control' ]])
+            		->add('password', PasswordType::class, [ 'attr' => ['class' => 'form-control' ]])
+
+	- Créer un controller ($ php bin/console make:controller) nommer le controller SecurityController
+	- Modifier le controller :
+		- Indiquer une nouvelle route
+		- Faire appel au formulaire :
+			public function registration(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder)
+    			{
+    				$user = new User();
+    				$form = $this->createForm(RegistrationType::class, $user);
+
+    				$form->handleRequest($request);
+
+    				if($form->isSubmitted() && $form->isValid()) {
+    					$hash = $encoder->encodePassword($user, $user->getPassword());
+
+    					$user->setPassword($hash);
+
+    					$manager->persist($user);
+    					$manager->flush();
+
+    					return $this->redirectToRoute('security_login');
+    				}
+
+    				return $this->render('security/registration.html.twig', [
+    					'form' => $form->createView()
+    				]);
+    			}
+
+	
+	- Ne pas oublier les différents "use", tel que l'appel des entités, des request, des PasswordType ect...
+	- Créer une vue html dans le dossier template/security -> registration.html.twig
+
+	- Ajouter le formulaire :
+		{{ form_start(form) }}
+
+		{{ form_row(form.username, {'label': 'Pseudo', 'attr': {'placeholder': 'Pseudo ...'}}) }}
+		{{ form_row(form.email, {'label': 'Email', 'attr': {'placeholder': 'Email ...'}}) }}
+		{{ form_row(form.password, {'label': 'Mot de passe', 'attr': {'placeholder': 'Mot de passe ...'}}) }}
+
+		<button type="submit" class="btn btn-success">Inscription</button>
+
+		{{ form_end(form) }}
+
+
+Crypter les mots de passes :
+		- Modifier le fichier config/packages/security.yaml
+		- Ajouter un encorder :
+			encoders:
+        			App\Entity\User:
+            				algorithm : bcrypt
+
+	- Dans le SecurityController ajouter au public function du form (UserPasswordEncoderInterface $encoder)
+	- Ajouter également : use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+	- Modifier le isSubmitted :
+		- $hash = $encoder->encodePassword($user, $user->getPassword());
+              	  $user->setPassword($hash);
+
+	- Dans l'entité User.php, ajouter dans la class User :
+		- class User implements UserInterface
+		- Ajouter également : use Symfony\Component\Security\Core\User\UserInterface;
+
+		- Créer de nouvelle function dans l'entité :
+			- public function eraseCredentials() {}
+
+    			  public function getSalt() {}
+
+    			  public function getRoles() {
+        		  return ['ROLE_USER'];
+    			  }
+
+
+Page de connexion :
+	- Création dans le controller d'une nouvelle function et d'une nouvelle route :
+		/**
+     		* @Route("connexion", name="security_login")
+     		*/
+    		public function login()
+    		{
+        		return $this->render('security/login.html.twig');
+    		}
+
+	- Création d'une page dans le templates/security/login.html.twig
+
+	- Dans le fichier config/packages/security.yaml
+		- Ajouter dans les providers :
+		in_database:
+            		entity:
+                		class: App\Entity\User
+                		property: email
+
+		- Ajouter également dans le main :
+		provider: in_database
+
+            	form_login:
+                	login_path: security_login
+                	check_path: security_login
+
+	- Ajouter dans la vu html le form :
+		        <form action="{{ path('security_login') }}" method="post">
+              			<div class="form-group">
+                			<input placeholder="Adresse Mail ..." required name="_username" type="text" class="form-control">
+              			</div>
+
+              			<div class="form-group">
+                			<input placeholder="Mot de passe ..." required name="_password" type="password" class="form-control">
+              			</div>
+
+              			<div class="form-group">
+                			<button type="submit" class="btn btn-success">Connexion</button>
+              			</div>
+        		</form>
+
+
+Déconnexion :
+	- Créer une route de déconnexion :
+	/**
+     	* @Route("/deconnexion.html.twig", name="security_logout")
+     	*/
+    	public function logout(){}
+
+	- Ajouter dans le security.yaml :
+	logout: 
+        	path: security_logout
+                target: index
+
+Navigations des boutons de connexion et déconnexion :
+	- Ajouter ces boutons dans le nav dans base.html.twig :
+	{% if not app.user %}
+        	<li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
+                </li>
+        {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_logout') }}">Déconnexion</a>
+                </li>
+        {% endif %}
+
+
+
+
+
+
+
+
+image
+jQuery
+
+
+
+
+
+
