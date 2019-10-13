@@ -25,11 +25,13 @@ body {
     margin-top: 2rem;
 }
 
-.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {
+.btn-secondary {
     color: #fff;
-    background-color: red;
-    border-color: red;
+    background-color: #343A40;
+    border-color: #343A40;
+    margin-right: 10px;
 }
+
 .btn-lg, .btn-group-lg > .btn {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
